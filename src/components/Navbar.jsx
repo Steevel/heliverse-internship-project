@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { getUsers, searchQuery } from "../features/userSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [query, setQuery] = useState("");
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const team = useSelector((state) => state.team.members);
+  console.log("team", team);
   // console.log(query);
 
   const handleKeyDown = (e) => {
@@ -18,7 +22,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="relative w-full bg-white border-b-2 border-gray">
+    <div className="relative w-full bg-white border-b-2 shadow-md border-gray">
       <div className="flex items-center justify-between px-4 py-2 mx-auto sm:px-6 lg:px-8">
         <div className="inline-flex items-center space-x-2">
           <span>
@@ -35,9 +39,11 @@ const Navbar = () => {
               />
             </svg>
           </span>
-          <span className="hidden mr-4 font-bold md:block">Heliverse</span>
+          <Link to="/" className="hidden mr-4 font-bold md:block">
+            Heliverse
+          </Link>
           <input
-            className="flex w-[250px] h-10 px-3 py-2 text-sm bg-gray-100 rounded-md placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex min-w-[150px] h-10 px-3 py-2 text-sm bg-gray-100 rounded-md placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
             type="text"
             placeholder="Serach"
             value={query}
@@ -45,6 +51,12 @@ const Navbar = () => {
             onKeyDown={handleKeyDown}
           ></input>
         </div>
+        <button
+          className="border-2 border-gray-500 rounded-md"
+          onClick={() => navigate("/team")}
+        >
+          Team {team.length}
+        </button>
       </div>
     </div>
   );

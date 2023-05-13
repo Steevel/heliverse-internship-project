@@ -101,16 +101,14 @@ export function UserList() {
             ))}
           </div>
           <div className="flex flex-col items-center w-full border-2 border-dashed rounded-lg md:p-2 lg:col-span-9 lg:h-full">
-            <div>
-              <div className="grid justify-center grid-cols-2 gap-2 md:grid-cols-4 ">
-                {/* <div className="flex flex-wrap justify-center gap-4"> */}
-                {userData.map((user) => (
-                  <Card key={user.id} user={user} />
-                ))}
-              </div>
+            <div className="grid justify-center grid-cols-2 gap-2 md:grid-cols-4 ">
+              {/* <div className="flex flex-wrap justify-center gap-4"> */}
+              {userData.map((user) => (
+                <Card key={user.id} user={user} />
+              ))}
             </div>
 
-            <div className="flex items-center mt-2">
+            <div className="flex items-center my-2">
               <a
                 href="#"
                 className="mx-1 text-sm font-semibold text-gray-900"
