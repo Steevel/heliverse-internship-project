@@ -1,4 +1,22 @@
+import { useState } from "react";
+import { getUsers, searchQuery } from "../features/userSlice";
+import { useDispatch } from "react-redux";
+
 const Navbar = () => {
+  const [query, setQuery] = useState("");
+  const dispatch = useDispatch();
+  // console.log(query);
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      if (query !== "") {
+        dispatch(searchQuery(query));
+      } else {
+        dispatch(getUsers());
+      }
+    }
+  };
+
   return (
     <div className="relative w-full bg-white border-b-2 border-gray">
       <div className="flex items-center justify-between px-4 py-2 mx-auto sm:px-6 lg:px-8">
@@ -22,6 +40,9 @@ const Navbar = () => {
             className="flex w-[250px] h-10 px-3 py-2 text-sm bg-gray-100 rounded-md placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
             type="text"
             placeholder="Serach"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
           ></input>
         </div>
       </div>

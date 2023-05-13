@@ -1,46 +1,57 @@
 import { ChevronDown } from "lucide-react";
-import data from "../data/data";
 import { Card } from "./Card";
-
-const filters = [
-  {
-    id: "domain",
-    name: "Domain",
-    options: [
-      { value: "Sales", label: "Sales" },
-      { value: "Finance", label: "Finance" },
-      { value: "Marketing", label: "Marketing" },
-      { value: "IT", label: "IT" },
-      { value: "Management", label: "Management" },
-      { value: "UI Designing", label: "UI Designing" },
-      { value: "Business Development", label: "Business Development" },
-    ],
-  },
-  {
-    id: "gender",
-    name: "Gender",
-    options: [
-      { value: "male", label: "Male" },
-      { value: "female", label: "Female" },
-    ],
-  },
-  {
-    id: "availability",
-    name: "Availability",
-    options: [
-      { value: "true", label: "Available" },
-      { value: "false", label: "Not Available" },
-    ],
-  },
-];
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { getUsers, getFilters } from "../features/userSlice";
+import FilterItem from "./FilterItem";
 
 export function UserList() {
-  const domains = [...new Set(data.map((user) => user.domain))];
-  console.log(domains);
-  const gender = [...new Set(data.map((user) => user.gender))];
-  console.log(gender);
-  const availability = [...new Set(data.map((user) => user.available))];
-  console.log(availability);
+  const [page, setPage] = useState(1);
+
+  const dispatch = useDispatch();
+  const userData = useSelector((state) => state.users.userData);
+  const filterData = useSelector((state) => state.users.filters);
+  const { domain, gender } = useSelector(
+    (state) => state.users.selectedFilters
+  );
+  // console.log("res", domain.length, gender.length);
+  // console.log("userData", userData);
+
+  if (userData.length === 0) {
+    if (domain.length === 0 && gender.length === 0) {
+      dispatch(getUsers(page));
+    }
+  }
+
+  const filters = [
+    {
+      id: "domain",
+      name: "Domain",
+      options: [
+        ...filterData.domain.map((item) => ({ value: item, label: item })),
+      ],
+    },
+    {
+      id: "gender",
+      name: "Gender",
+      options: [
+        ...filterData.gender.map((item) => ({ value: item, label: item })),
+      ],
+    },
+    {
+      id: "availability",
+      name: "Availability",
+      options: [
+        { value: "true", label: "Available" },
+        // { value: "false", label: "Not Available" },
+      ],
+    },
+  ];
+
+  useEffect(() => {
+    dispatch(getFilters());
+    dispatch(getUsers(page));
+  }, [page, dispatch]);
 
   return (
     <section className="w-full">
@@ -79,60 +90,58 @@ export function UserList() {
                 </h3>
                 <ul className="mt-2">
                   {filter.options.map((option) => (
-                    <li
+                    <FilterItem
                       key={option.value}
-                      className="flex items-center justify-between py-2"
-                    >
-                      <div className="flex items-center">
-                        <input
-                          id={`${filter.id}-${option.value}`}
-                          name={`${filter.id}[]`}
-                          defaultValue={option.value}
-                          type="checkbox"
-                          className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
-                        />
-                        <label
-                          htmlFor={`${filter.id}-${option.value}`}
-                          className="ml-3 text-sm font-medium text-gray-900"
-                        >
-                          {option.label}
-                        </label>
-                      </div>
-                    </li>
+                      option={option}
+                      filterId={filter.id}
+                    />
                   ))}
                 </ul>
               </div>
             ))}
           </div>
-          {/* h-[400px] */}
-          <div className="w-full border-2 border-dashed rounded-lg md:p-2 lg:col-span-9 lg:h-full">
-            <div className="grid justify-center grid-cols-2 gap-2 md:grid-cols-4 xl:grid-cols-5">
-              {/* <div className="flex flex-wrap justify-center gap-4"> */}
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
+          <div className="flex flex-col items-center w-full border-2 border-dashed rounded-lg md:p-2 lg:col-span-9 lg:h-full">
+            <div>
+              <div className="grid justify-center grid-cols-2 gap-2 md:grid-cols-4 ">
+                {/* <div className="flex flex-wrap justify-center gap-4"> */}
+                {userData.map((user) => (
+                  <Card key={user.id} user={user} />
+                ))}
+              </div>
             </div>
-            <div>pagination</div>
+
+            <div className="flex items-center mt-2">
+              <a
+                href="#"
+                className="mx-1 text-sm font-semibold text-gray-900"
+                onClick={() => (page >= 2 ? setPage(page - 1) : page)}
+              >
+                &larr; Previous
+              </a>
+              <a
+                href="#"
+                className="flex items-center px-3 py-1 mx-1 text-gray-900 border border-gray-400 rounded-md hover:scale-105"
+              >
+                {page}
+              </a>
+              <a
+                href="#"
+                className="mx-2 text-sm font-semibold text-gray-900"
+                onClick={() => (page <= 49 ? setPage(page + 1) : page)}
+              >
+                Next &rarr;
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </section>
   );
 }
+
+// const domains = [...new Set(data.map((user) => user.domain))];
+// console.log(domains);
+// const gender = [...new Set(data.map((user) => user.gender))];
+// console.log(gender);
+// const availability = [...new Set(data.map((user) => user.available))];
+// console.log(availability);
